@@ -6,7 +6,7 @@ This library is to connect easily an mDot with SODAQ Autonomo
 ## Requiremets
 
 * [SODAQ Autonomo](http://shop.sodaq.com/nl/arduino-boards/)
-* [MultiTech mDot](http://www.multitech.com/brands/multiconnect-mdot)
+* [GPRSbee](http://gprsbee.com/)
 * [Arduino IDE 1.6.7 or higher](https://www.arduino.cc/en/Main/Software)
 
 ## Setup
@@ -14,9 +14,9 @@ This library is to connect easily an mDot with SODAQ Autonomo
 1. Download Arduino IDE [here](https://www.arduino.cc/en/Main/Software)
 2. Go to Arduino IDE **File -> Preferences -> Additional Board Manager URLs** and add next line there "http://downloads.sodaq.net/package_sodaq_index.json".
 3. Open Board Manager via **Tools -> Board -> Board Manager** and search for SODAQ boards, select SODAQ SAMD boards for the Autonomo.
-4. Download the SODAQMdot library of Ubidots [here](https://github.com/ubidots/ubidots-sodaq-mdot/archive/master.zip)
+4. Download the GPRSbee library of Ubidots [here](https://github.com/ubidots/ubidots-sodaq-gprsbee)
 5. Go to the Arduino IDE, click on **Sketch -> Include Library -> Add .ZIP Library**
-6. Select the .ZIP file of SODAQMdot and then "Accept" or "Choose"
+6. Select the .ZIP file of GPRSbee and then "Accept" or "Choose"
 5. Close the Arduino IDE and open it again.
 
     
@@ -25,7 +25,7 @@ This library is to connect easily an mDot with SODAQ Autonomo
 To send one value from mDot to your gateway copy the next code:
 
 ```cpp
-#include <SODAQMdot.h>
+#include <GPRSbee.h>
 
 // Put here your SSID of lora gateway
 #define APN "Your_Lora_Gateway_SSID"
