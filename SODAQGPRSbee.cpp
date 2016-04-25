@@ -102,7 +102,7 @@ bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
     }
     Serial1.println("AT+CGATT?");
     if (!waitForOK(6000)) {
-      SerialUSB.println("Error at CGATT");
+      SerialUSB.println("GPRS is not attached");
       return false;
     }
     Serial1.println("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
@@ -131,12 +131,12 @@ bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
       SerialUSB.println("Error at setting up apn pass");
       return false;
     }
-    Serial1.println(F("AT+SAPBR=1,1"));
+    Serial1.println("AT+SAPBR=1,1");
     if (!waitForOK(6000)) {
       SerialUSB.println("Error with AT+SAPBR=1,1 Connection ip");
       return false;
     }
-    Serial1.println(F("AT+SAPBR=2,1"));
+    Serial1.println("AT+SAPBR=2,1");
     if (!waitForOK(6000)) {
       SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
       return false;
@@ -144,16 +144,34 @@ bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
     return true;
 }
 void Ubidots::add(char *variableName, float value, char *context) {
-  (val+currentValue)->varName = variableName;
-  (val+currentValue)->ctext = context;
-  (val+currentValue)->varValue = value;
-  currentValue++;
-  if (currentValue > MAX_VALUE) {
-    currentValue = MAX_VALUE;
-  }
+    (val+currentValue)->varName = variableName;
+    (val+currentValue)->ctext = context;
+    (val+currentValue)->varValue = value;
+    currentValue++;
+    if (currentValue > MAX_VALUE) {
+        currentValue = MAX_VALUE;
+    }
 }
 bool Ubidots::sendAll() {
-    
+    Serial1.println("AT+CIPMUX=0");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      return false;
+    }
+    Serial1.print("AT+CIPSTART=\"TCP\",\"");
+    Serial1.print(SERVER);
+    Serial1.print("\",\"");
+    Serial1.print(PORT);
+    Serial1.println("\"");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      return false;
+    }
+    Serial1.println("AT+CIPSEND");
+    if (!waitForMessage(">", 6000)) {
+      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      return false;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
