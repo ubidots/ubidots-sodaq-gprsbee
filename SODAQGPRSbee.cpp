@@ -34,6 +34,7 @@ Ubidots::Ubidots(char* token) {
     _vcc33Pin = -1;
     _onoffPin = -1;
     _statusPin = -1;
+    _token = token;
 
 }
 void Ubidots::setOnBee(int vcc33Pin, int onoffPin, int statusPin) {
@@ -125,7 +126,7 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
     free(allData);
     return num;
 }
-bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
+bool Ubidots::setApn(char* apn, char* user, char* pwd) {
     Serial1.println("AT+CSQ");
     if (!waitForOK(6000)) {
       SerialUSB.println("Error at CSQ");

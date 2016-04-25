@@ -43,8 +43,8 @@ typedef struct Value {
 class Ubidots {
  public:
 	Ubidots(char* token=NULL);
-	bool setApn(char* apn, char* user, char* pwd));
-	float getValue(char* dsTag, char* idName);
+	bool setApn(char* apn, char* user, char* pwd);
+	float getValueWithDatasource(char* dsTag, char* idName);
 	void setDataSourceName(char* dsName);
 	void setDataSourceTag(char* dsTag);
 	bool sendAll();
@@ -72,6 +72,7 @@ class Ubidots {
 
     char* _dsTag;
     char* _dsName;
+    char* _token;
     uint8_t currentValue;
     Value * val;    
 };
