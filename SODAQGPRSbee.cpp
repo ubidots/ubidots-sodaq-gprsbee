@@ -91,100 +91,10 @@ ok:
   return bufcnt;
 
 }
-bool Ubidots::loraSend(float data) {
-    String dat;
-    dat = String(data, 3);
-    Serial1.print("AT+SEND ");
-    Serial1.println(dat);
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Connection failing");
-      return false;
-    }
-    delay(1000);
-}
-bool Ubidots::resetLora() {
-    Serial1.println("AT");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Connection failing");
-      return false;
-    }
-    Serial1.println("AT&F");
-    if (!waitForOK(6000)) {
-      return false;
-    }
-    return true;
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////        GPRS Functions       /////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
-}
-/** 
- * This function is to set the APN, USER and PASSWORD
- * @arg apn the APN of your mobile
- * @arg user the USER of the APN
- * @arg pwd the PASSWORD of the APN
- * @return true upon success
- */
-bool Ubidots::loraConnection(char* ssid, char* pass, char* band) {
-    uint8_t action_flag;
-    resetLora();
-    Serial1.println("AT");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Connection failing");
-      return false;
-    }
-    Serial1.println("AT+PN=1");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Connection failing");
-      return false;
-    }
-    Serial1.println("AT+FREQ");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Connection failing");
-      return false;
-    }
-    Serial1.print("AT+NI=1,");
-    Serial1.println(ssid);
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at stting up of LoRa ssid");
-      return false;
-    }
-    Serial1.print("AT+NK=1,");
-    Serial1.println(pass);
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at stting up of LoRa pass");
-      return false;
-    }
-    Serial1.print("AT+FSB=");
-    Serial1.println(band);
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at stting up of LoRa sub band");
-      return false;
-    }
-    Serial1.println("AT+TXDR=10");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at stting up of ACK");
-      return false;
-    }
-    Serial1.println("AT+FEC=1");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at stting up of ACK");
-      return false;
-    }
-    Serial1.println("AT+ACK=1");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at stting up of ACK");
-      return false;
-    }
-    Serial1.println("AT&W");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at saving settings");
-      return false;
-    }
-    Serial1.println("AT+NJM=2");
-    if (!waitForOK(6000)) {
-      SerialUSB.println("Fail at joining network");
-      return false;
-    }
-    return true;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////        bee init      /////////////////////////////////////

@@ -28,11 +28,11 @@ To send one value from mDot to your gateway copy the next code:
 #include <SODAQMdot.h>
 
 // Put here your SSID of lora gateway
-#define GATEWAY_SSID "Your_Lora_Gateway_SSID"
+#define APN "Your_Lora_Gateway_SSID"
 // Put here your PASS of lora gateway
-#define GATEWAY_PASS "Your_Lora_Gateway_PASS"
+#define USER_APN "Your_Lora_Gateway_PASS"
 // Put here your frequenci sub-band of lora gateway
-#define GATEWAY_SUB_BAND "1"
+#define PASS_APN "1"
 
 Ubidots loraClient;
 

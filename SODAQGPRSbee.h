@@ -31,14 +31,11 @@ class Ubidots {
  public:
 	Ubidots(char* token=NULL);
 	void setOnBee(int vcc33Pin, int onoffPin, int statusPin);
-	bool loraSend(float data);
 	char* readData(uint16_t timeout);
-    bool loraConnection(char* ssid, char* pass, char* band);
     void flushInput();
 
  private:
 	void init(int vcc33Pin, int onoffPin, int statusPin);
-	bool resetLora();
 	void on();
 	void off();
 	bool isOn();
