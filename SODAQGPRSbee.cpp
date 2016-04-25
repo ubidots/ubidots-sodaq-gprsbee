@@ -174,8 +174,8 @@ bool Ubidots::sendAll() {
     }
     all += "=>";
     for (i = 0; i < currentValue; ) {
-        str = String(((val + i)->valueName), 5);
-        all += String((val + i)->idName);
+        str = String(((val + i)->varValue), 5);
+        all += String((val + i)->varName);
         all += ":";
         all += str;
         if ((val + i)->ctext != NULL) {
