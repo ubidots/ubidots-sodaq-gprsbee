@@ -100,8 +100,38 @@ void Ubidots::setDataSourceName(char* dsName) {
 void Ubidots::setDataSourceTag(char* dsTag) {
     _dsTag = dsTag;
 }
+float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
+    float num;
+    int i = 0;
+    char allData[300];
+    String response;
+    uint8_t bodyPosinit;
+    sprintf(allData, "%s|LV|%s|%s:%s|end", USER_AGENT, _token, dsTag, idName);
+    Serial1.println("AT+CIPSEND");
+    if (!waitForMessage(">", 6000)) {
+      SerialUSB.println("Error at CIPSEND");
+      return false;
+    }
+    Serial1.write(allData);
+    Serial1.write(0x1A);
+    if (!waitForMessage("SEND OK", 6000)) {
+      SerialUSB.println("Error sending the message");
+      return false;
+    }
+    bodyPosinit = 3 + response.indexOf("OK|");
+    response = response.substring(bodyPosinit);
+    num = response.toFloat();
+    currentValue = 0;
+    free(allData);
+    return num;
+}
 bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
     Serial1.println("AT+CSQ");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at CSQ");
+      return false;
+    }
+    Serial1.println("AT+CIPSHUT");
     if (!waitForOK(6000)) {
       SerialUSB.println("Error at CSQ");
       return false;
@@ -214,8 +244,8 @@ bool Ubidots::sendAll() {
       SerialUSB.println("Error sending the message");
       return false;
     }
-    Serial1.println("AT+CIPSHUT");
-    if (!waitForMessage("SHUT OK", 6000)) {
+    Serial1.println("AT+CIPCLOSE");
+    if (!waitForMessage("CLOSE OK", 6000)) {
       SerialUSB.println("Error closing TCP connection");
       return false;
     }

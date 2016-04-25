@@ -44,7 +44,7 @@ class Ubidots {
  public:
 	Ubidots(char* token=NULL);
 	bool setApn(char* apn, char* user, char* pwd));
-	float getValue(char* id);
+	float getValue(char* dsTag, char* idName);
 	void setDataSourceName(char* dsName);
 	void setDataSourceTag(char* dsTag);
 	bool sendAll();
