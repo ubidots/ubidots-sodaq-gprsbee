@@ -153,9 +153,39 @@ void Ubidots::add(char *variableName, float value, char *context) {
     }
 }
 bool Ubidots::sendAll() {
+
+    int i;
+    String all;
+    String str;
+    all = USER_AGENT;
+    all += "|POST|";
+    all += _token;
+    all += "|";
+    all += _dsTag;
+    if (_dsName != NULL) {
+        all += ":";
+        all += _dsName;
+    }
+    all += "=>";
+    for (i = 0; i < currentValue; ) {
+        str = String(((val + i)->valueName), 5);
+        all += String((val + i)->idName);
+        all += ":";
+        all += str;
+        if ((val + i)->ctext != NULL) {
+            all += "$";
+            all += String((val + i)->ctext);
+        }
+        i++;
+        if(i < currentValue){
+            all += ","; 
+        }
+    }
+    all += "|end";
+    Serial.println(all.c_str());
     Serial1.println("AT+CIPMUX=0");
     if (!waitForOK(6000)) {
-      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      SerialUSB.println("Error CIPMUX=0");
       return false;
     }
     Serial1.print("AT+CIPSTART=\"TCP\",\"");
@@ -164,14 +194,26 @@ bool Ubidots::sendAll() {
     Serial1.print(PORT);
     Serial1.println("\"");
     if (!waitForOK(6000)) {
-      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      SerialUSB.println("Error at CIPSTART");
       return false;
     }
     Serial1.println("AT+CIPSEND");
     if (!waitForMessage(">", 6000)) {
-      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      SerialUSB.println("Error at CIPSEND");
       return false;
     }
+    Serial1.write(all.c_str());
+    Serial1.write(0x1A);
+    if (!waitForMessage("SEND OK", 6000)) {
+      SerialUSB.println("Error sending the message");
+      return false;
+    }
+    Serial1.println("AT+CIPSHUT");
+    if (!waitForMessage("SHUT OK", 6000)) {
+      SerialUSB.println("Error closing TCP connection");
+      return false;
+    }
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

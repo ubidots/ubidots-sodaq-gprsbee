@@ -29,7 +29,9 @@
 #define SERVER "translate.ubidots.com"
 #define PORT "9010"
 #define MAX_VALUE 5
+#define USER_AGENT "SODAQGPRSbee/1.0"
 #define DEFAULT_BUFFER_SIZE      64
+
 
 
 typedef struct Value {
@@ -65,6 +67,9 @@ class Ubidots {
 	int8_t _vcc33Pin;
     int8_t _onoffPin;
     int8_t _statusPin;
+
+    char* _dsTag;
+    char* _dsName;
     uint8_t currentValue;
     Value * val;    
 };
