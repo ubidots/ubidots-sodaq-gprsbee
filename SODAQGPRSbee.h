@@ -45,6 +45,8 @@ class Ubidots {
 	Ubidots(char* token=NULL);
 	bool setApn(char* apn, char* user, char* pwd));
 	float getValue(char* id);
+	void setDataSourceName(char* dsName);
+	void setDataSourceTag(char* dsTag);
 	bool sendAll();
 	void add(char *variableName, float value, char* context);
 	void setOnBee(int vcc33Pin, int onoffPin, int statusPin);

@@ -94,6 +94,12 @@ ok:
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////        GPRS Functions       /////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+void Ubidots::setDataSourceName(char* dsName) {
+    _dsName = dsName;
+}
+void Ubidots::setDataSourceTag(char* dsTag) {
+    _dsTag = dsTag;
+}
 bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
     Serial1.println("AT+CSQ");
     if (!waitForOK(6000)) {
