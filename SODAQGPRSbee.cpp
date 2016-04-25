@@ -94,7 +94,67 @@ ok:
 ////////////////////////////////////////////////////////////////////////////////
 /////////////////////        GPRS Functions       /////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-
+bool Ubidots::setApn(char* apn, char* user, char* pwd)) {
+    Serial1.println("AT+CSQ");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at CSQ");
+      return false;
+    }
+    Serial1.println("AT+CGATT?");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at CGATT");
+      return false;
+    }
+    Serial1.println("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at setting up CONTYPE");
+      return false;
+    }
+    Serial1.print("AT+SAPBR=3,1,\"APN\",\"");
+    Serial1.print(apn);
+    Serial1.println("\"");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at setting up APN");
+      return false;
+    }
+    Serial1.print("AT+SAPBR=3,1,\"USER\",\"");
+    Serial1.print(user);
+    Serial1.println("\"");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at setting up apn user");
+      return false;
+    }
+    Serial1.print("AT+SAPBR=3,1,\"PWD\",\"");
+    Serial1.print(pwd);
+    Serial1.println("\"");
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error at setting up apn pass");
+      return false;
+    }
+    Serial1.println(F("AT+SAPBR=1,1"));
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error with AT+SAPBR=1,1 Connection ip");
+      return false;
+    }
+    Serial1.println(F("AT+SAPBR=2,1"));
+    if (!waitForOK(6000)) {
+      SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
+      return false;
+    }
+    return true;
+}
+void Ubidots::add(char *variableName, float value, char *context) {
+  (val+currentValue)->varName = variableName;
+  (val+currentValue)->ctext = context;
+  (val+currentValue)->varValue = value;
+  currentValue++;
+  if (currentValue > MAX_VALUE) {
+    currentValue = MAX_VALUE;
+  }
+}
+bool Ubidots::sendAll() {
+    
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////        bee init      /////////////////////////////////////

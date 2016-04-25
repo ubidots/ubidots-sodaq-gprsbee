@@ -25,11 +25,26 @@
 #include <Arduino.h>
 #include <Stream.h>
 
+
+#define SERVER "translate.ubidots.com"
+#define PORT "9010"
+#define MAX_VALUE 5
 #define DEFAULT_BUFFER_SIZE      64
+
+
+typedef struct Value {
+  char  *varName;
+  char  *ctext;
+  float varValue;
+} Value;
 
 class Ubidots {
  public:
 	Ubidots(char* token=NULL);
+	bool setApn(char* apn, char* user, char* pwd));
+	float getValue(char* id);
+	bool sendAll();
+	void add(char *variableName, float value, char* context);
 	void setOnBee(int vcc33Pin, int onoffPin, int statusPin);
 	char* readData(uint16_t timeout);
     void flushInput();
@@ -50,5 +65,7 @@ class Ubidots {
 	int8_t _vcc33Pin;
     int8_t _onoffPin;
     int8_t _statusPin;
+    uint8_t currentValue;
+    Value * val;    
 };
 #endif
