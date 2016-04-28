@@ -48,7 +48,7 @@ class Ubidots {
 	void setDataSourceName(char* dsName);
 	void setDataSourceTag(char* dsTag);
 	bool sendAll();
-	void add(char *variableName, float value, char* context);
+	void add(char *variableName, float value, char* context = NULL);
 	void setOnBee(int vcc33Pin, int onoffPin, int statusPin);
 	char* readData(uint16_t timeout);
     void flushInput();

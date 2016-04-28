@@ -35,6 +35,10 @@ Ubidots::Ubidots(char* token) {
     _onoffPin = -1;
     _statusPin = -1;
     _token = token;
+    _dsName = NULL;
+    _dsTag = "GPRSbee";
+    currentValue = 0;
+    val = (Value *)malloc(MAX_VALUES*sizeof(Value));
 
 }
 void Ubidots::setOnBee(int vcc33Pin, int onoffPin, int statusPin) {
@@ -190,7 +194,6 @@ void Ubidots::add(char *variableName, float value, char *context) {
     }
 }
 bool Ubidots::sendAll() {
-
     int i;
     String all;
     String str;
@@ -205,7 +208,7 @@ bool Ubidots::sendAll() {
     }
     all += "=>";
     for (i = 0; i < currentValue; ) {
-        str = String(((val + i)->varValue), 5);
+        str = String(((val + i)->varValue), 2);
         all += String((val + i)->varName);
         all += ":";
         all += str;
@@ -213,10 +216,8 @@ bool Ubidots::sendAll() {
             all += "$";
             all += String((val + i)->ctext);
         }
+        all += ","; 
         i++;
-        if(i < currentValue){
-            all += ","; 
-        }
     }
     all += "|end";
     Serial.println(all.c_str());
