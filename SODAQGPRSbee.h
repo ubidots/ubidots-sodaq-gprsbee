@@ -35,14 +35,14 @@
 
 
 typedef struct Value {
-  char  *varName;
-  char  *ctext;
-  float varValue;
+    char  *varName;
+    char  *ctext;
+    float varValue;
 } Value;
 
 class Ubidots {
  public:
-	Ubidots(char* token=NULL);
+    Ubidots(char* token=NULL);
 	bool setApn(char* apn, char* user, char* pwd);
 	float getValueWithDatasource(char* dsTag, char* idName);
 	void setDataSourceName(char* dsName);
@@ -52,7 +52,6 @@ class Ubidots {
 	void setOnBee(int vcc33Pin, int onoffPin, int statusPin);
 	char* readData(uint16_t timeout);
     void flushInput();
-
  private:
 	void init(int vcc33Pin, int onoffPin, int statusPin);
 	void on();
@@ -69,7 +68,6 @@ class Ubidots {
 	int8_t _vcc33Pin;
     int8_t _onoffPin;
     int8_t _statusPin;
-
     char* _dsTag;
     char* _dsName;
     char* _token;
