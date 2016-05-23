@@ -72,15 +72,15 @@ int Ubidots::readLine(uint32_t ts_max) {
         if (c < 0) {
             continue;
         }
-        SerialUSB.print((char)c);                 // echo the char
+        SerialUSB.print((char)c);  // echo the char
         seenCR = c == '\r';
         if (c == '\r') {
-            ts_waitLF = millis() + 50;        // Wait another .05 sec for an optional LF
+            ts_waitLF = millis() + 50;  // Wait another .05 sec for an optional LF
         } else if (c == '\n') {
             goto ok;
         } else {
             // Any other character is stored in the line buffer
-            if (bufcnt < (DEFAULT_BUFFER_SIZE - 1)) {    // Leave room for the terminating NUL
+            if (bufcnt < (DEFAULT_BUFFER_SIZE - 1)) {  // Leave room for the terminating NUL
                 buffer[bufcnt++] = c;
             }
         }
@@ -134,16 +134,17 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
 }
 bool Ubidots::setApn(char* apn, char* user, char* pwd) {
     char message[9][50];
-    sprintf(message[0],"AT+CSQ");
-    sprintf(message[1],"AT+CIPSHUT");
-    sprintf(message[2],"AT+CGATT?");
-    sprintf(message[3],"AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
-    sprintf(message[4],"AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
-    sprintf(message[5],"AT+SAPBR=3,1,\"USER\",\"%s\"", user);
-    sprintf(message[6],"AT+SAPBR=3,1,\"PWD\",\"%s\"", pwd);
-    sprintf(message[7],"AT+SAPBR=1,1");
-    sprintf(message[8],"AT+SAPBR=2,1");
-    for(i = 0; i < 9; i++) {
+    int i = 0;
+    sprintf(message[0], "AT+CSQ");
+    sprintf(message[1], "AT+CIPSHUT");
+    sprintf(message[2], "AT+CGATT?");
+    sprintf(message[3], "AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
+    sprintf(message[4], "AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
+    sprintf(message[5], "AT+SAPBR=3,1,\"USER\",\"%s\"", user);
+    sprintf(message[6], "AT+SAPBR=3,1,\"PWD\",\"%s\"", pwd);
+    sprintf(message[7], "AT+SAPBR=1,1");
+    sprintf(message[8], "AT+SAPBR=2,1");
+    for (i = 0; i < 9; i++) {
         if (!SendMessageAndwaitForOK(message[i], 6000)) {
             Serial.print("Error with ");
             Serial.println(message[i]);
@@ -190,15 +191,14 @@ bool Ubidots::sendAll() {
     }
     all += "|end";
     Serial.println(all.c_str());
-
-    sprintf(message[0],"AT+CIPMUX=0");
-    sprintf(message[1],"AT+CIPSTART=\"TCP\",\"%s\",\"%s\"", _server, PORT);
-    sprintf(message[2],"AT+CIPSEND");
-    sprintf(message[4],"AT+CIPCLOSE");
-    sprintf(message[5],">");
-    sprintf(message[6],"SEND OK");
-    sprintf(message[7],"CLOSE OK");
-    for(i = 0; i < 2; i++) {
+    sprintf(message[0], "AT+CIPMUX=0");
+    sprintf(message[1], "AT+CIPSTART=\"TCP\",\"%s\",\"%s\"", _server, PORT);
+    sprintf(message[2], "AT+CIPSEND");
+    sprintf(message[4], "AT+CIPCLOSE");
+    sprintf(message[5], ">");
+    sprintf(message[6], "SEND OK");
+    sprintf(message[7], "CLOSE OK");
+    for (i = 0; i < 2; i++) {
         if (!SendMessageAndwaitForOK(message[i], 6000)) {
             Serial.print("Error with ");
             Serial.println(message[i]);
@@ -206,14 +206,14 @@ bool Ubidots::sendAll() {
             return false;
         }
     }
-    for(i = 2; i < 5; i++) {
+    for (i = 2; i < 5; i++) {
         if (i != 3) {
             Serial1.println(message[i]);
         } else {
             Serial1.write(all.c_str());
-            Serial1.write(0x1A);        
-        }        
-        if (!waitForMessage(message[i+3], 6000)) {
+            Serial1.write(0x1A);
+        }
+        if (!waitForMessage(message[i + 3], 6000)) {
             Serial.print("Error with ");
             Serial.println(message[i]);
             currentValue = 0;
