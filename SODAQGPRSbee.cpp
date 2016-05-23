@@ -163,7 +163,7 @@ void Ubidots::add(char *variableName, float value, char *context) {
 }
 bool Ubidots::sendAll() {
     int i;
-    char message[9][50];
+    char message[8][50];
     String all;
     String str;
     all = USER_AGENT;
@@ -191,39 +191,36 @@ bool Ubidots::sendAll() {
     all += "|end";
     Serial.println(all.c_str());
 
-    sprintf(message[0],"AT+CSQ");
-    sprintf(message[1],"AT+CIPSHUT");
-    sprintf(message[2],"AT+CGATT?");
-    Serial1.println("AT+CIPMUX=0");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error CIPMUX=0");
-        return false;
+    sprintf(message[0],"AT+CIPMUX=0");
+    sprintf(message[1],"AT+CIPSTART=\"TCP\",\"%s\",\"%s\"", _server, PORT);
+    sprintf(message[2],"AT+CIPSEND");
+    sprintf(message[4],"AT+CIPCLOSE");
+    sprintf(message[5],">");
+    sprintf(message[6],"SEND OK");
+    sprintf(message[7],"CLOSE OK");
+    for(i = 0; i < 2; i++) {
+        if (!SendMessageAndwaitForOK(message[i], 6000)) {
+            Serial.print("Error with ");
+            Serial.println(message[i]);
+            currentValue = 0;
+            return false;
+        }
     }
-    Serial1.print("AT+CIPSTART=\"TCP\",\"");
-    Serial1.print(SERVER);
-    Serial1.print("\",\"");
-    Serial1.print(PORT);
-    Serial1.println("\"");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at CIPSTART");
-        return false;
+    for(i = 2; i < 5; i++) {
+        if (i != 3) {
+            Serial1.println(message[i]);
+        } else {
+            Serial1.write(all.c_str());
+            Serial1.write(0x1A);        
+        }        
+        if (!waitForMessage(message[i+3], 6000)) {
+            Serial.print("Error with ");
+            Serial.println(message[i]);
+            currentValue = 0;
+            return false;
+        }
     }
-    Serial1.println("AT+CIPSEND");
-    if (!waitForMessage(">", 6000)) {
-        SerialUSB.println("Error at CIPSEND");
-        return false;
-    }
-    Serial1.write(all.c_str());
-    Serial1.write(0x1A);
-    if (!waitForMessage("SEND OK", 6000)) {
-        SerialUSB.println("Error sending the message");
-        return false;
-    }
-    Serial1.println("AT+CIPCLOSE");
-    if (!waitForMessage("CLOSE OK", 6000)) {
-        SerialUSB.println("Error closing TCP connection");
-        return false;
-    }
+    currentValue = 0;
     return true;
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -316,72 +313,4 @@ bool Ubidots::waitForMessage(const char *msg, uint32_t ts_max) {
         }
     }
     return false;         // This indicates: timed out
-}
-// This function was taken from GPRSbee library of Kees Bakker
-bool Ubidots::waitForMessage_P(const char *msg, uint32_t ts_max) {
-    int len;
-    while ((len = readLine(ts_max)) >= 0) {
-        if (len == 0) {
-            // Skip empty lines
-            continue;
-        }
-        if (strncmp_P(buffer, msg, strlen_P(msg)) == 0) {
-            return true;
-        }
-    }
-    return false;         // This indicates: timed out
-}
-// This function was taken from GPRSbee library of Kees Bakker
-int Ubidots::waitForMessages(PGM_P msgs[], size_t nrMsgs, uint32_t ts_max) {
-    int len;
-    while ((len = readLine(ts_max)) >= 0) {
-        if (len == 0) {
-            // Skip empty lines
-            continue;
-        }
-        for (size_t i = 0; i < nrMsgs; ++i) {
-            if (strcmp_P(buffer, msgs[i]) == 0) {
-                return i;
-            }
-        }
-    }
-    return -1;         // This indicates: timed out
-}
-
-/* This function was taken from GPRSbee library of Kees Bakker
- * \brief Wait for a prompt, or timeout
- *
- * \return true if succeeded (the reply received), false if otherwise (timed out)
- */
-bool Ubidots::waitForPrompt(const char *prompt, uint32_t ts_max) {
-    const char * ptr = prompt;
-    while (*ptr != '\0') {
-        wdt_reset();
-        if (isTimedOut(ts_max)) {
-        break;
-    }
-    int c = Serial1.read();
-    if (c < 0) {
-        continue;
-    }
-    SerialUSB.print((char)c);
-    switch (c) {
-    case '\r':
-        // Ignore
-        break;
-    case '\n':
-        // Start all over
-        ptr = prompt;
-        break;
-    default:
-        if (*ptr == c) {
-            ptr++;
-        } else {
-            // Start all over
-            ptr = prompt;
-        }
-        break;
-    }
-  }
-  return true;
 }
