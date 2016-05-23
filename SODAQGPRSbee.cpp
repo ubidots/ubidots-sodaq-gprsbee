@@ -30,10 +30,11 @@
 
 #include "SODAQGPRSbee.h"
 
-Ubidots::Ubidots(char* token) {
+Ubidots::Ubidots(char* token, char* server) {
     _vcc33Pin = -1;
     _onoffPin = -1;
     _statusPin = -1;
+    _server = server
     _token = token;
     _dsName = NULL;
     _dsTag = "GPRSbee";
@@ -103,19 +104,26 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
     float num;
     int i = 0;
     char allData[300];
+    char message[4][50];
+    sprintf(message[0], "AT+CIPSEND");
+    sprintf(message[2], ">");
+    sprintf(message[3], "SEND OK");
     String response;
     uint8_t bodyPosinit;
-    sprintf(allData, "%s|LV|%s|%s:%s|end", USER_AGENT, _token, dsTag, idName);
+    sprintf(allData, "%s|LV|%s|%s:%s|end\n\x1A", USER_AGENT, _token, dsTag, idName);
     Serial1.println("AT+CIPSEND");
-    if (!waitForMessage(">", 6000)) {
-        SerialUSB.println("Error at CIPSEND");
-        return false;
-    }
-    Serial1.write(allData);
-    Serial1.write(0x1A);
-    if (!waitForMessage("SEND OK", 6000)) {
-        SerialUSB.println("Error sending the message");
-        return false;
+
+    for (i = 0; i < 2; i++) {
+        if (i != 1) {
+            Serial1.println(message[i]);
+        } else {
+            Serial1.write(allData);
+        }
+        if (!waitForMessage(message[i+2], 6000)) {
+            SerialUSB.print("Error at CIPSEND");
+            SerialUSB.println(message[i]);
+            return false;
+        }
     }
     bodyPosinit = 3 + response.indexOf("OK|");
     response = response.substring(bodyPosinit);
@@ -125,6 +133,8 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
     return num;
 }
 bool Ubidots::setApn(char* apn, char* user, char* pwd) {
+    
+
     Serial1.println("AT+CSQ");
     if (!waitForOK(6000)) {
         SerialUSB.println("Error at CSQ");
