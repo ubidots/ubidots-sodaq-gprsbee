@@ -34,7 +34,7 @@ Ubidots::Ubidots(char* token, char* server) {
     _vcc33Pin = -1;
     _onoffPin = -1;
     _statusPin = -1;
-    _server = server
+    _server = server;
     _token = token;
     _dsName = NULL;
     _dsTag = "GPRSbee";
@@ -107,22 +107,26 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
     char message[4][50];
     sprintf(message[0], "AT+CIPSEND");
     sprintf(message[2], ">");
-    sprintf(message[3], "SEND OK");
+    sprintf(message[3], "OK|");
     String response;
     uint8_t bodyPosinit;
     sprintf(allData, "%s|LV|%s|%s:%s|end\n\x1A", USER_AGENT, _token, dsTag, idName);
-    Serial1.println("AT+CIPSEND");
-
     for (i = 0; i < 2; i++) {
         if (i != 1) {
             Serial1.println(message[i]);
+            if (!waitForMessage(message[i+2], 6000)) {
+                SerialUSB.print("Error at ");
+                SerialUSB.println(message[i]);
+                return false;
+            }
         } else {
             Serial1.write(allData);
-        }
-        if (!waitForMessage(message[i+2], 6000)) {
-            SerialUSB.print("Error at CIPSEND");
-            SerialUSB.println(message[i]);
-            return false;
+            if (!waitForMessage(message[i+2], 6000)) {
+                SerialUSB.print("Error at ");
+                SerialUSB.println(message[i]);
+                return false;
+            }
+            response = String(buffer);
         }
     }
     bodyPosinit = 3 + response.indexOf("OK|");
@@ -158,8 +162,8 @@ void Ubidots::add(char *variableName, float value, char *context) {
     (val+currentValue)->ctext = context;
     (val+currentValue)->varValue = value;
     currentValue++;
-    if (currentValue > MAX_VALUE) {
-        currentValue = MAX_VALUE;
+    if (currentValue > MAX_VALUES) {
+        currentValue = MAX_VALUES;
     }
 }
 bool Ubidots::sendAll() {

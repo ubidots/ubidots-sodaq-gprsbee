@@ -28,7 +28,7 @@
 
 #define SERVER "translate.ubidots.com"
 #define PORT "9010"
-#define MAX_VALUE 5
+#define MAX_VALUES 5
 #define USER_AGENT "SODAQGPRSbee/1.0"
 #define DEFAULT_BUFFER_SIZE      64
 
@@ -61,6 +61,7 @@ class Ubidots {
 	int readLine(uint32_t ts_max);
 	bool isTimedOut(uint32_t ts) { return (long)(millis() - ts) >= 0; }
 	bool SendMessageAndwaitForOK(char *message, uint16_t timeout = 4000);
+    bool waitForMessage(const char *msg, uint32_t ts_max);
 	char buffer[DEFAULT_BUFFER_SIZE];
 	int8_t _vcc33Pin;
     int8_t _onoffPin;
