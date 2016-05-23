@@ -143,67 +143,12 @@ bool Ubidots::setApn(char* apn, char* user, char* pwd) {
     sprintf(message[6],"AT+SAPBR=3,1,\"PWD\",\"%s\"", pwd);
     sprintf(message[7],"AT+SAPBR=1,1");
     sprintf(message[8],"AT+SAPBR=2,1");
-    for(i = 0; i < 10; i++) {
+    for(i = 0; i < 9; i++) {
         if (!SendMessageAndwaitForOK(message[i], 6000)) {
             Serial.print("Error with ");
             Serial.println(message[i]);
             return false;
         }
-    }
-    return true;
-
-
-
-    Serial1.println("AT+CSQ");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at CSQ");
-        return false;
-    }
-    Serial1.println("AT+CIPSHUT");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at CSQ");
-        return false;
-    }
-    Serial1.println("AT+CGATT?");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("GPRS is not attached");
-        return false;
-    }
-    Serial1.println("AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at setting up CONTYPE");
-        return false;
-    }
-    Serial1.print("AT+SAPBR=3,1,\"APN\",\"");
-    Serial1.print(apn);
-    Serial1.println("\"");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at setting up APN");
-        return false;
-    }
-    Serial1.print("AT+SAPBR=3,1,\"USER\",\"");
-    Serial1.print(user);
-    Serial1.println("\"");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at setting up apn user");
-        return false;
-    }
-    Serial1.print("AT+SAPBR=3,1,\"PWD\",\"");
-    Serial1.print(pwd);
-    Serial1.println("\"");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error at setting up apn pass");
-        return false;
-    }
-    Serial1.println("AT+SAPBR=1,1");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error with AT+SAPBR=1,1 Connection ip");
-        return false;
-    }
-    Serial1.println("AT+SAPBR=2,1");
-    if (!waitForOK(6000)) {
-        SerialUSB.println("Error with AT+SAPBR=2,1 no IP to show");
-        return false;
     }
     return true;
 }
@@ -218,6 +163,7 @@ void Ubidots::add(char *variableName, float value, char *context) {
 }
 bool Ubidots::sendAll() {
     int i;
+    char message[9][50];
     String all;
     String str;
     all = USER_AGENT;
@@ -239,11 +185,15 @@ bool Ubidots::sendAll() {
             all += "$";
             all += String((val + i)->ctext);
         }
-        all += ","; 
+        all += ",";
         i++;
     }
     all += "|end";
     Serial.println(all.c_str());
+
+    sprintf(message[0],"AT+CSQ");
+    sprintf(message[1],"AT+CIPSHUT");
+    sprintf(message[2],"AT+CGATT?");
     Serial1.println("AT+CIPMUX=0");
     if (!waitForOK(6000)) {
         SerialUSB.println("Error CIPMUX=0");
