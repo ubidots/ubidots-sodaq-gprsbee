@@ -60,7 +60,7 @@ class Ubidots {
 	bool isOn();
 	int readLine(uint32_t ts_max);
 	bool isTimedOut(uint32_t ts) { return (long)(millis() - ts) >= 0; }
-	bool waitForOK(uint16_t timeout=4000);
+	bool SendMessageAndwaitForOK(char *message, uint16_t timeout=4000);
 	bool waitForMessage(const char *msg, uint32_t ts_max);
 	bool waitForMessage_P(const char *msg, uint32_t ts_max);
 	int waitForMessages(const char *msgs[], size_t nrMsgs, uint32_t ts_max);
@@ -76,4 +76,4 @@ class Ubidots {
     uint8_t currentValue;
     Value * val;
 };
-#endif
+#endif // __SODAQGPRSbee_H_

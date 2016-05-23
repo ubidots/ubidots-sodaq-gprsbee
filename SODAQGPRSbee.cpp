@@ -133,7 +133,26 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
     return num;
 }
 bool Ubidots::setApn(char* apn, char* user, char* pwd) {
-    
+    char message[9][50];
+    sprintf(message[0],"AT+CSQ");
+    sprintf(message[1],"AT+CIPSHUT");
+    sprintf(message[2],"AT+CGATT?");
+    sprintf(message[3],"AT+SAPBR=3,1,\"CONTYPE\",\"GPRS\"");
+    sprintf(message[4],"AT+SAPBR=3,1,\"APN\",\"%s\"", apn);
+    sprintf(message[5],"AT+SAPBR=3,1,\"USER\",\"%s\"", user);
+    sprintf(message[6],"AT+SAPBR=3,1,\"PWD\",\"%s\"", pwd);
+    sprintf(message[7],"AT+SAPBR=1,1");
+    sprintf(message[8],"AT+SAPBR=2,1");
+    for(i = 0; i < 10; i++) {
+        if (!SendMessageAndwaitForOK(message[i], 6000)) {
+            Serial.print("Error with ");
+            Serial.println(message[i]);
+            return false;
+        }
+    }
+    return true;
+
+
 
     Serial1.println("AT+CSQ");
     if (!waitForOK(6000)) {
@@ -317,7 +336,7 @@ bool Ubidots::isOn() {
     return true;
 }
 // This function was taken from GPRSbee library of Kees Bakker
-bool Ubidots::waitForOK(uint16_t timeout) {
+bool Ubidots::SendMessageAndwaitForOK(char *message, uint16_t timeout) {
     int len;
     uint32_t ts_max = millis() + timeout;
     while ((len = readLine(ts_max)) >= 0) {
