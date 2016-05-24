@@ -149,7 +149,7 @@ bool Ubidots::setApn(char* apn, char* user, char* pwd) {
     sprintf(message[7], "AT+SAPBR=1,1");
     sprintf(message[8], "AT+SAPBR=2,1");
     for (i = 0; i < 9; i++) {
-        if (!SendMessageAndwaitForOK(message[i], 6000)) {
+        if (!sendMessageAndwaitForOK(message[i], 6000)) {
             Serial.print("Error with ");
             Serial.println(message[i]);
             return false;
@@ -203,7 +203,7 @@ bool Ubidots::sendAll() {
     sprintf(message[6], "SEND OK");
     sprintf(message[7], "CLOSE OK");
     for (i = 0; i < 2; i++) {
-        if (!SendMessageAndwaitForOK(message[i], 6000)) {
+        if (!sendMessageAndwaitForOK(message[i], 6000)) {
             Serial.print("Error with ");
             Serial.println(message[i]);
             currentValue = 0;
@@ -287,7 +287,7 @@ bool Ubidots::isOn() {
     return true;
 }
 // This function was taken from GPRSbee library of Kees Bakker
-bool Ubidots::SendMessageAndwaitForOK(char *message, uint16_t timeout) {
+bool Ubidots::sendMessageAndwaitForOK(char *message, uint16_t timeout) {
     int len;
     uint32_t ts_max = millis() + timeout;
     while ((len = readLine(ts_max)) >= 0) {
