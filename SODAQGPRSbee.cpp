@@ -119,7 +119,7 @@ float Ubidots::getValueWithDatasource(char* dsTag, char* idName) {
                 SerialUSB.println(message[i]);
                 return false;
             }
-        } else {
+        } else {  // The position 1 is the message that we will send, it is bigger than buffer size, then we didn't save it in buffer
             Serial1.write(allData);
             if (!waitForMessage(message[i+2], 6000)) {
                 SerialUSB.print("Error at ");
