@@ -28,7 +28,7 @@
 
 #define SERVER "translate.ubidots.com"
 #define PORT "9010"
-#define MAX_VALUE 5
+#define MAX_VALUES 5
 #define USER_AGENT "SODAQGPRSbee/1.0"
 #define DEFAULT_BUFFER_SIZE      64
 
@@ -42,8 +42,8 @@ typedef struct Value {
 
 class Ubidots {
  public:
-    Ubidots(char* token=NULL);
-	bool setApn(char* apn, char* user, char* pwd);
+    explicit Ubidots(char* token, char* server = SERVER);
+	bool setApn(char* apn = "", char* user = "", char* pwd = "");
 	float getValueWithDatasource(char* dsTag, char* idName);
 	void setDataSourceName(char* dsName);
 	void setDataSourceTag(char* dsTag);
@@ -52,6 +52,7 @@ class Ubidots {
 	void setOnBee(int vcc33Pin, int onoffPin, int statusPin);
 	char* readData(uint16_t timeout);
     void flushInput();
+
  private:
 	void init(int vcc33Pin, int onoffPin, int statusPin);
 	void on();
@@ -59,19 +60,17 @@ class Ubidots {
 	bool isOn();
 	int readLine(uint32_t ts_max);
 	bool isTimedOut(uint32_t ts) { return (long)(millis() - ts) >= 0; }
-	bool waitForOK(uint16_t timeout=4000);
-	bool waitForMessage(const char *msg, uint32_t ts_max);
-	bool waitForMessage_P(const char *msg, uint32_t ts_max);
-	int waitForMessages(const char *msgs[], size_t nrMsgs, uint32_t ts_max);
-	bool waitForPrompt(const char *prompt, uint32_t ts_max);
+	bool sendMessageAndwaitForOK(char *message, uint16_t timeout = 4000);
+    bool waitForMessage(const char *msg, uint32_t ts_max);
 	char buffer[DEFAULT_BUFFER_SIZE];
 	int8_t _vcc33Pin;
     int8_t _onoffPin;
     int8_t _statusPin;
     char* _dsTag;
+    char* _server;
     char* _dsName;
     char* _token;
     uint8_t currentValue;
-    Value * val;    
+    Value * val;
 };
-#endif
+#endif // __SODAQGPRSbee_H_
