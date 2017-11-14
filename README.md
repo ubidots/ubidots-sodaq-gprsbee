@@ -1,5 +1,6 @@
-# Ubidots SODAQ Autonomo with GPRSbee
+# [DEPRECATED] Ubidots SODAQ Autonomo with GPRSbee
 
+**WARNING**: This library is deprecated of the Ubidots libraries. To handle your SODAQ Autonomo with GPRSbee with Ubidots, reference to the [Ubidots REST API Reference](https://ubidots.com/docs/api/) to build the HTTP Requests.
 
 This library is to connect easily an mDot with SODAQ Autonomo
 
@@ -19,7 +20,7 @@ This library is to connect easily an mDot with SODAQ Autonomo
 6. Select the .ZIP file of GPRSbee and then "Accept" or "Choose"
 5. Close the Arduino IDE and open it again.
 
-    
+
 ## Send one value to Ubidots
 
 To send one value from mDot to your gateway copy the next code:
@@ -43,7 +44,7 @@ void setup()
     // incase you want to operate Autonomo with external power source
     while ((!SerialUSB) && (millis() < 10000))
         ;
-    
+
     SerialUSB.begin(115200);
     SerialUSB.println("Here we start !! ");
 
