@@ -26,8 +26,8 @@
 #include <Stream.h>
 
 
-#define SERVER "translate.ubidots.com"
-#define PORT "9010"
+#define SERVER "industrial.api.ubidots.com"
+#define PORT "9012"
 #define MAX_VALUES 5
 #define USER_AGENT "SODAQGPRSbee/1.0"
 #define DEFAULT_BUFFER_SIZE      64
